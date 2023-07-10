@@ -19,8 +19,11 @@ const SignupForm = () => {
     setUserFormData({ ...userFormData, [name]: value });
   };
 
+  const [createUser, { error }] = useMutation(CREATE_USER);
+
   const handleFormSubmit = async (event) => {
     event.preventDefault();
+
 
     // check if form has everything (as per react-bootstrap docs)
     const form = event.currentTarget;
@@ -30,7 +33,16 @@ const SignupForm = () => {
     }
 
     try {
-      const [createUser, { error }] = useMutation(CREATE_USER);
+
+      const { data } = await createUser({
+       variables: { 
+        username,
+        email,
+        password,
+       },
+      });
+
+      // const [createUser, { error }] = useMutation(CREATE_USER);
 
       // const response = await createUser(userFormData);
 
@@ -53,6 +65,10 @@ const SignupForm = () => {
       password: '',
     });
   };
+
+  if (error) {
+    return <h2>SOMETHING WENT WRONG...</h2>;
+  }
 
   return (
     <>
