@@ -36,9 +36,9 @@ const SignupForm = () => {
 
       const { data } = await createUser({
        variables: { 
-        username,
-        email,
-        password,
+        username: userFormData.username,
+        email: userFormData.email,
+        password: userFormData.password,
        },
       });
 

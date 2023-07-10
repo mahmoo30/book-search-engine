@@ -13,6 +13,13 @@ const resolvers = {
             }
             throw new AuthenticationError('Not logged in'); 
         },
+        books: async () => {
+            return Book.find();
+        },
+        book: async (parent, { bookId }) => {
+            const params = bookId ? { bookId } : {};
+            return Book.find(params);
+        },
     },
     Mutation: {
         login: async (parent, { email, password }) => {
