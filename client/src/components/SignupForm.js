@@ -41,6 +41,9 @@ const SignupForm = () => {
         password: userFormData.password,
        },
       });
+      console.log(data.createUser);
+      Auth.login(data.createUser.token);
+
 
       // const [createUser, { error }] = useMutation(CREATE_USER);
 

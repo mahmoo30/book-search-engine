@@ -9,11 +9,11 @@ import {
 } from 'react-bootstrap';
 
 import Auth from '../utils/auth';
-// import { saveBook, searchGoogleBooks } from '../utils/API';
+import { saveBook, searchGoogleBooks } from '../utils/API';
 import { saveBookIds, getSavedBookIds } from '../utils/localStorage';
 import { useQuery, useMutation } from '@apollo/client';
 import { SAVE_BOOK } from '../utils/mutations';
-import { QUERY_BOOKS } from '../utils/queries';
+// import { QUERY_BOOKS } from '../utils/queries';
 
 const SearchBooks = () => {
   // create state for holding returned google api data
@@ -24,9 +24,9 @@ const SearchBooks = () => {
   // create state to hold saved bookId values
   const [savedBookIds, setSavedBookIds] = useState(getSavedBookIds());
 
-  const { loading, data } = useQuery(QUERY_BOOKS, {
-    fetchPolicy: "no-cache"
-  });
+  // const { loading, data } = useQuery(QUERY_BOOKS, {
+  //   fetchPolicy: "no-cache"
+  // });
   const [saveBook, { error }] = useMutation(SAVE_BOOK);
 
   // set up useEffect hook to save `savedBookIds` list to localStorage on component unmount
@@ -45,42 +45,40 @@ const SearchBooks = () => {
 
     try {
 
-      const { data } = await QUERY_BOOKS({
-        variables: { searchInput: searchInput }
+      const response = await searchGoogleBooks(searchInput);
+
+      if (!response.ok) {
+        throw new Error('something went wrong!');
+      }
+
+      const { items } = await response.json();
+
+      const bookData = items.map((book) => ({
+        bookId: book.id,
+        authors: book.volumeInfo.authors || ['No author to display'],
+        title: book.volumeInfo.title,
+        description: book.volumeInfo.description,
+        image: book.volumeInfo.imageLinks?.thumbnail || '',
+      }));
+
+      const uniqueBooks = Array.from(new Set(bookData.map(book => book.bookId))).map(bookId => {
+        return bookData.find(book => book.bookId === bookId);
       });
 
-      // const response = await searchGoogleBooks(searchInput);
-
-      // if (!response.ok) {
-      //   throw new Error('something went wrong!');
-      // }
-
-      // const { items } = await response.json();
-
-      // const bookData = items.map((book) => ({
-      //   bookId: book.id,
-      //   authors: book.volumeInfo.authors || ['No author to display'],
-      //   title: book.volumeInfo.title,
-      //   description: book.volumeInfo.description,
-      //   image: book.volumeInfo.imageLinks?.thumbnail || '',
-      // }));
-
-      setSearchedBooks(data);
+      setSearchedBooks(uniqueBooks);
       setSearchInput('');
     } catch (err) {
       console.error(err);
     }
   };
 
-  if (loading) {
-    return <h2>LOADING...</h2>;
-  }
+  // if (loading) {
+  //   return <h2>LOADING...</h2>;
+  // }
 
-  if (error) {
-    return <h2>ERROR</h2>;
-  }
-
-  
+  // if (error) {
+  //   return <h2>ERROR</h2>;
+  // }
 
   // create function to handle saving a book to our database
   const handleSaveBook = async (bookId) => {
@@ -99,6 +97,7 @@ const SearchBooks = () => {
         variables: { bookData: { ...bookToSave } }
       });
 
+      console.log(data);
       // const response = await saveBook(bookToSave, token);
 
       // if (!response.ok) {
@@ -147,6 +146,7 @@ const SearchBooks = () => {
         </h2>
         <Row>
           {searchedBooks.map((book) => {
+            console.log(book);
             return (
               <Col md="4">
                 <Card key={book.bookId} border='dark'>

@@ -8,18 +8,11 @@ const resolvers = {
             if (context.user) {
                 const userData = await User.findOne({ _id: context.user._id })
                     .select('-__v -password')
-                    .populate('books')
                 return userData;
             }
             throw new AuthenticationError('Not logged in'); 
         },
-        books: async () => {
-            return Book.find();
-        },
-        book: async (parent, { bookId }) => {
-            const params = bookId ? { bookId } : {};
-            return Book.find(params);
-        },
+
     },
     Mutation: {
         login: async (parent, { email, password }) => {
@@ -42,12 +35,12 @@ const resolvers = {
             const token = signToken(user);
             return { token, user };
         },
-        saveBook: async (parent, {input}, context) => {
+        saveBook: async (parent, {bookData}, context) => {
             if (context.user) {
                 try {
                     const updatedUser = await User.findOneAndUpdate(
                         { _id: context.user._id },
-                        { $addToSet: { savedBooks: input } },
+                        { $addToSet: { savedBooks: bookData } },
                         { new: true, runValidators: true }
                     );
                     return updatedUser;
