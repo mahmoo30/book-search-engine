@@ -6,7 +6,7 @@ import {
   Row,
   Col
 } from 'react-bootstrap';
-
+import { useParams } from 'react-router-dom';
 // import { getMe, deleteBook } from '../utils/API';
 import Auth from '../utils/auth';
 import { removeBookId } from '../utils/localStorage';
@@ -48,10 +48,46 @@ const SavedBooks = () => {
   //   getUserData();
   // }, [userDataLength]);
 
-  const { loading, data } = useQuery(QUERY_ME);
+  //const { username: userParam } = useParams();
+  const username = Auth.getProfile().data.username;
+  console.log(username);
+
+  const { loading, data } = useQuery(QUERY_ME, {
+    variables: { username },
+  });
 
   const userData = data?.me || {};
-  console.log(userData);
+  console.log(data);
+  //const userData = data?.me || {};
+  //console.log(userData);
+
+
+    // const { username: userParam } = useParams();
+  
+    // const { loading, data } = useQuery(userParam ? QUERY_USER : QUERY_ME, {
+    //   variables: { username: userParam },
+    // });
+  
+    // const user = data?.me || data?.user || {};
+    // // navigate to personal profile page if username is yours
+    // if (Auth.loggedIn() && Auth.getProfile().data.username === userParam) {
+    //   return <Navigate to="/me" />;
+    // }
+  
+    // if (loading) {
+    //   return <div>Loading...</div>;
+    // }
+  
+    // if (!user?.username) {
+    //   return (
+    //     <h4>
+    //       You need to be logged in to see this. Use the navigation links above to
+    //       sign up or log in!
+    //     </h4>
+    //   );
+    // }
+
+
 
   const [removeBook, { error }] = useMutation(DELETE_BOOK);
 
@@ -95,7 +131,7 @@ const SavedBooks = () => {
         <h2 className='pt-5'>
           {userData.savedBooks?.length
             ? `Viewing ${userData.savedBooks.length} saved ${userData.savedBooks.length === 1 ? 'book' : 'books'}:`
-            : 'You have no saved books!'}
+            : `You have no saved books! Go add some!`}
         </h2>
         <Row>
           {userData.savedBooks?.map((book) => {

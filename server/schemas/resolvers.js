@@ -8,11 +8,11 @@ const resolvers = {
             if (context.user) {
                 const userData = await User.findOne({ _id: context.user._id })
                     .select('-__v -password')
+                    .populate('savedBooks');
                 return userData;
             }
             throw new AuthenticationError('Not logged in'); 
         },
-
     },
     Mutation: {
         login: async (parent, { email, password }) => {
@@ -52,15 +52,12 @@ const resolvers = {
         },
         deleteBook: async (parent, {bookId}, context) => {
             if (context.user) {
-                const book = await Book.findOneAndDelete({
-                    _id: bookId,
-                    bookAuthor: context.user.username,
-                });
-                await User.findOneAndUpdate(
+                const updatedUser = await User.findOneAndUpdate(
                     { _id: context.user._id },
-                    { $pull: { books: book._id } }
+                    { $pull: { savedBooks: {bookId} } },
+                    { new: true },
                 );
-                return book;
+                return updatedUser;
               }
               throw new AuthenticationError('You need to be logged in!');
         },
