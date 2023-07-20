@@ -68,4 +68,4 @@ You can find more of my work on GitHub: [mahmoo30](https://github.com/mahmoo30)
 
 #### This README was generated using a [README-generator](https://github.com/mahmoo30/readmegenerator) 🔥🔥🔥
 
-Launched Application: [Book Search Engine](https://github.com/coding-boot-camp/solid-broccoli](https://pure-bastion-13517-9e04d956763a.herokuapp.com/)https://pure-bastion-13517-9e04d956763a.herokuapp.com/)
+Launched Application: [Book Search Engine](https://pure-bastion-13517-9e04d956763a.herokuapp.com/)
