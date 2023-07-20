@@ -18,77 +18,9 @@ import { normalizeConfig } from '@apollo/client/cache/inmemory/helpers';
 
 
 const SavedBooks = () => {
-  // const [userData, setUserData] = useState({});
-
-  // // use this to determine if `useEffect()` hook needs to run again
-  // const userDataLength = Object.keys(userData).length;
-
-  // useEffect(() => {
-  //   const getUserData = async () => {
-  //     try {
-  //       const token = Auth.loggedIn() ? Auth.getToken() : null;
-
-  //       if (!token) {
-  //         return false;
-  //       }
-
-  //       const response = await getMe(token);
-
-  //       if (!response.ok) {
-  //         throw new Error('something went wrong!');
-  //       }
-
-  //       const user = await response.json();
-  //       setUserData(user);
-  //     } catch (err) {
-  //       console.error(err);
-  //     }
-  //   };
-
-  //   getUserData();
-  // }, [userDataLength]);
-
-  //const { username: userParam } = useParams();
   const username = Auth.getProfile().data.username;
-  console.log(username);
-
-  const { loading, data } = useQuery(QUERY_ME, {
-    variables: { username },
-  });
-
+  const { loading, data } = useQuery(QUERY_ME, {variables: { username },});
   const userData = data?.me || {};
-  console.log(data);
-  //const userData = data?.me || {};
-  //console.log(userData);
-
-
-    // const { username: userParam } = useParams();
-  
-    // const { loading, data } = useQuery(userParam ? QUERY_USER : QUERY_ME, {
-    //   variables: { username: userParam },
-    // });
-  
-    // const user = data?.me || data?.user || {};
-    // // navigate to personal profile page if username is yours
-    // if (Auth.loggedIn() && Auth.getProfile().data.username === userParam) {
-    //   return <Navigate to="/me" />;
-    // }
-  
-    // if (loading) {
-    //   return <div>Loading...</div>;
-    // }
-  
-    // if (!user?.username) {
-    //   return (
-    //     <h4>
-    //       You need to be logged in to see this. Use the navigation links above to
-    //       sign up or log in!
-    //     </h4>
-    //   );
-    // }
-
-
-
   const [removeBook, { error }] = useMutation(DELETE_BOOK);
 
   // create function that accepts the book's mongo _id value as param and deletes the book from the database
